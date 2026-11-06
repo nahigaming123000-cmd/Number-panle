@@ -1,27 +1,40 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-require('dotenv').config();
 
 const app = express();
+
+// CORS এবং JSON পার্সিং এনাবল করা
 app.use(cors());
 app.use(express.json());
 
-// আপনার MiahSMS API তথ্য (এখানে সরাসরি বসিয়ে দেওয়া হলো)
+// MiahSMS API তথ্য
 const MIAH_API_KEY = 'MIAHSMS_7B1BA76A1513872E8E978087';
 const BASE_URL = 'https://miahsms.com/bot/api';
 
+// রুট URL (সার্ভার ঠিক আছে কিনা চেক করার জন্য)
+app.get('/', (req, res) => {
+    res.send('OTP Panel Backend is Running Successfully!');
+});
+
 // ==========================================
-// ১. নাম্বার নেওয়ার API
+// ১. নাম্বার নেওয়ার API (POST)
 // ==========================================
 app.post('/api/get-number', async (req, res) => {
     try {
         const { range } = req.body;
-        if (!range) return res.status(400).json({ success: false, message: "Range is required" });
+        if (!range) {
+            return res.status(400).json({ success: false, message: "Range is required" });
+        }
 
         const response = await axios.post(`${BASE_URL}/getnum`, 
             { range: range }, 
-            { headers: { 'X-API-Key': MIAH_API_KEY, 'Content-Type': 'application/json' } }
+            { 
+                headers: { 
+                    'X-API-Key': MIAH_API_KEY, 
+                    'Content-Type': 'application/json' 
+                } 
+            }
         );
 
         if (response.data && response.data.meta && response.data.meta.code === 200) {
@@ -34,12 +47,13 @@ app.post('/api/get-number', async (req, res) => {
             res.status(400).json({ success: false, message: response.data.message || "Number not available" });
         }
     } catch (error) {
-        res.status(500).json({ success: false, message: "Server Error" });
+        console.error("Error fetching number:", error.message);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
 
 // ==========================================
-// ২. OTP চেক করার API
+// ২. OTP চেক করার API (GET)
 // ==========================================
 app.get('/api/check-otp', async (req, res) => {
     try {
@@ -58,15 +72,18 @@ app.get('/api/check-otp', async (req, res) => {
                 new_max_id: response.data.data.max_id || sinceId 
             });
         } else {
-            res.status(400).json({ success: false });
+            res.status(400).json({ success: false, message: "Failed to fetch OTPs" });
         }
     } catch (error) {
-        res.status(500).json({ success: false });
+        console.error("Error fetching OTP:", error.message);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
 
-// সার্ভার চালু
-const PORT = 3000;
+// ==========================================
+// সার্ভার চালু করা (Render এর জন্য অত্যন্ত জরুরি)
+// ==========================================
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Node.js Server running on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });

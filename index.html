@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-            <!-- Profile Section (এখানে প্রোফাইল বসানো হলো) -->
+            <!-- Profile Section -->
             <div class="px-6 py-6 border-b border-slate-800">
                 <div class="flex items-center gap-4 mb-4">
                     <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
@@ -197,7 +197,9 @@
         let pollingInterval = null;
         let lastOtpId = 0;
 
-        // প্রোফাইলে API Key দেখানো/লুকানো
+        // Render লাইভ সার্ভার লিংক
+        const BACKEND_URL = "https://number-panle.onrender.com";
+
         function toggleApiKey() {
             const field = document.getElementById('apiKeyField');
             const icon = document.getElementById('eyeIcon');
@@ -212,7 +214,6 @@
             }
         }
 
-        // নাম্বার রিকোয়েস্ট
         async function requestNumber() {
             const rangeInput = document.getElementById('rangeInput').value.trim();
             const btn = document.getElementById('getNumBtn');
@@ -227,7 +228,8 @@
             addLog(`Requesting number for range: ${rangeInput}...`, 'text-indigo-400');
 
             try {
-                const response = await fetch('http://localhost:3000/api/get-number', {
+                // লাইভ সার্ভারে রিকোয়েস্ট পাঠানো হচ্ছে
+                const response = await fetch(`${BACKEND_URL}/api/get-number`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ range: rangeInput })
@@ -246,28 +248,27 @@
                     }
 
                     addLog(`Success! Number allocated: ${currentNumber}`, 'text-emerald-400');
-                    startPolling(); // OTP চেক শুরু
+                    startPolling(); 
                 } else {
                     document.getElementById('displayNumber').innerText = "Failed";
                     addLog(`Error: ${data.message || 'Out of stock'}`, 'text-rose-400');
                 }
             } catch (error) {
                 document.getElementById('displayNumber').innerText = "Server Error";
-                addLog("Network Error: Backend offline.", 'text-rose-400');
+                addLog("Network Error: Backend offline or sleeping.", 'text-rose-400');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-bolt"></i> Get Number';
             }
         }
 
-        // OTP পোলিং
         function startPolling() {
             if (pollingInterval) clearInterval(pollingInterval);
             addLog("Started polling for OTP...", 'text-amber-400');
             
             pollingInterval = setInterval(async () => {
                 try {
-                    const response = await fetch(`http://localhost:3000/api/check-otp?last_id=${lastOtpId}`);
+                    const response = await fetch(`${BACKEND_URL}/api/check-otp?last_id=${lastOtpId}`);
                     const data = await response.json();
 
                     if (data.success && data.otps.length > 0) {
@@ -288,7 +289,6 @@
             }, 3000); 
         }
 
-        // হেল্পার ফাংশন
         function extractOtpFromMessage(message) {
             if (!message) return null;
             const match = message.match(/\b\d{4,6}\b/);

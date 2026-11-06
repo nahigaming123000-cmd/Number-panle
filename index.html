@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Panel - Dashboard & Profile</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fafbfc;
+            background-image: radial-gradient(#e2e8f0 0.8px, transparent 0.8px);
+            background-size: 16px 16px;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 2px solid white;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="antialiased text-slate-800 h-screen flex overflow-hidden">
+
+    <!-- ==================== SIDEBAR WITH PROFILE ==================== -->
+    <aside class="w-72 bg-slate-950 text-white flex flex-col justify-between hidden md:flex h-full shadow-2xl z-20">
+        <div class="overflow-y-auto">
+            <!-- Logo -->
+            <div class="p-6 flex items-center gap-3 border-b border-slate-800">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                    <i class="fas fa-bolt text-white text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-sm tracking-wider uppercase">OTP Panel</h1>
+                    <p class="text-[10px] text-slate-400 font-semibold tracking-widest">MiahSMS API</p>
+                </div>
+            </div>
+
+            <!-- Profile Section (এখানে প্রোফাইল বসানো হলো) -->
+            <div class="px-6 py-6 border-b border-slate-800">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        MD
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-sm text-white">Md Arif</h2>
+                        <p class="text-[11px] text-emerald-400 font-bold"><i class="fas fa-circle text-[8px] mr-1"></i> Active</p>
+                    </div>
+                </div>
+                
+                <!-- Balance Box -->
+                <div class="bg-slate-900 rounded-xl p-4 border border-slate-800">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Wallet Balance</p>
+                    <p class="text-2xl font-black text-white">৳47.70</p>
+                    <button class="mt-3 w-full bg-slate-800 hover:bg-slate-700 text-xs font-bold py-2 rounded-lg transition-colors border border-slate-700">
+                        <i class="fas fa-plus mr-1"></i> Add Fund
+                    </button>
+                </div>
+            </div>
+
+            <!-- API Key Section -->
+            <div class="px-6 py-4 border-b border-slate-800">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                    <i class="fas fa-key text-emerald-500"></i> API Key
+                </p>
+                <div class="flex bg-slate-900 border border-slate-800 rounded-lg overflow-hidden">
+                    <input type="password" id="apiKeyField" value="MIAHSMS_7B1BA76A1513872E8E978087" readonly class="w-full bg-transparent text-xs text-slate-300 px-3 py-2 outline-none font-mono">
+                    <button onclick="toggleApiKey()" class="px-3 text-slate-500 hover:text-white transition-colors">
+                        <i class="far fa-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="p-4 space-y-2">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-indigo-500/10 text-indigo-400 font-bold text-sm transition-all">
+                    <i class="fas fa-layer-group text-lg w-6"></i> Dashboard
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-white font-semibold text-sm transition-all">
+                    <i class="fas fa-clock-rotate-left text-lg w-6"></i> Transaction History
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800/50 text-slate-400 hover:text-white font-semibold text-sm transition-all">
+                    <i class="fas fa-gear text-lg w-6"></i> Settings
+                </a>
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-slate-800">
+            <button class="w-full bg-slate-900 hover:bg-rose-500 hover:text-white text-slate-400 font-bold text-xs py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+                <i class="fas fa-power-off"></i> Logout
+            </button>
+        </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        
+        <!-- Header -->
+        <header class="glass h-16 border-b border-slate-200 flex items-center justify-between px-6 z-10 sticky top-0">
+            <h2 class="text-sm font-extrabold text-slate-800 tracking-wide uppercase">Live Console</h2>
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> API Online
+                </span>
+            </div>
+        </header>
+
+        <!-- Scrollable Content -->
+        <div class="p-6 overflow-y-auto h-full flex-1 space-y-6">
+            
+            <!-- Top Grid: Get Number -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Input Card -->
+                <div class="lg:col-span-1 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm h-fit">
+                    <h3 class="font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+                        <i class="fas fa-magnifying-glass text-indigo-500"></i> Get Virtual Number
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1.5">Range Prefix (e.g. 26134XXX)</label>
+                            <input type="text" id="rangeInput" placeholder="Enter range..." class="w-full bg-slate-50 border border-slate-200 px-4 py-3 rounded-xl text-sm font-bold text-slate-800 outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all uppercase">
+                        </div>
+                        <button onclick="requestNumber()" id="getNumBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-indigo-500/30 active:scale-95 transition-all flex justify-center items-center gap-2">
+                            <i class="fas fa-bolt"></i> Get Number
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Result Card -->
+                <div class="lg:col-span-2 bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden text-white">
+                    <div class="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500 rounded-full blur-[80px] opacity-30"></div>
+                    
+                    <div class="relative z-10 h-full flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="font-extrabold text-slate-400 uppercase tracking-widest text-xs">Allocated Number</h3>
+                                <span id="countryBadge" class="hidden bg-white/10 px-3 py-1 rounded-lg text-[10px] font-bold border border-white/10">Country</span>
+                            </div>
+                            
+                            <div class="flex items-center gap-3">
+                                <h1 id="displayNumber" class="text-3xl md:text-4xl font-black font-mono tracking-tight text-white">+00000000000</h1>
+                                <button onclick="copyText('displayNumber')" class="text-slate-400 hover:text-white transition-colors" title="Copy Number">
+                                    <i class="far fa-copy text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 bg-black/30 border border-white/5 rounded-xl p-4 flex items-center justify-between">
+                            <div>
+                                <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-1">OTP Received</p>
+                                <p id="displayOtp" class="text-2xl font-black font-mono text-emerald-400">---</p>
+                            </div>
+                            <button onclick="copyText('displayOtp')" class="w-10 h-10 bg-white/5 hover:bg-white/10 rounded-lg flex items-center justify-center text-slate-300 transition-colors" title="Copy OTP">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Logs / Live Feed -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
+                    <h3 class="font-extrabold text-slate-900 flex items-center gap-2">
+                        <i class="fas fa-terminal text-slate-400"></i> Live API Feed
+                    </h3>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Auto-polling</span>
+                </div>
+                
+                <div class="bg-slate-900 rounded-xl p-4 h-64 overflow-y-auto font-mono text-xs text-slate-300" id="logContainer">
+                    <p class="text-slate-500 italic">// Waiting for requests...</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        let currentNumber = "";
+        let pollingInterval = null;
+        let lastOtpId = 0;
+
+        // প্রোফাইলে API Key দেখানো/লুকানো
+        function toggleApiKey() {
+            const field = document.getElementById('apiKeyField');
+            const icon = document.getElementById('eyeIcon');
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                field.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // নাম্বার রিকোয়েস্ট
+        async function requestNumber() {
+            const rangeInput = document.getElementById('rangeInput').value.trim();
+            const btn = document.getElementById('getNumBtn');
+            
+            if (!rangeInput) { alert("Please enter a valid range prefix!"); return; }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Getting...';
+            document.getElementById('displayNumber').innerText = "Fetching...";
+            document.getElementById('displayOtp').innerText = "---";
+            document.getElementById('countryBadge').classList.add('hidden');
+            addLog(`Requesting number for range: ${rangeInput}...`, 'text-indigo-400');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/get-number', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ range: rangeInput })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentNumber = data.number;
+                    document.getElementById('displayNumber').innerText = currentNumber;
+                    
+                    if(data.raw_data && data.raw_data.country) {
+                        const badge = document.getElementById('countryBadge');
+                        badge.innerText = data.raw_data.country + " (" + data.raw_data.operator + ")";
+                        badge.classList.remove('hidden');
+                    }
+
+                    addLog(`Success! Number allocated: ${currentNumber}`, 'text-emerald-400');
+                    startPolling(); // OTP চেক শুরু
+                } else {
+                    document.getElementById('displayNumber').innerText = "Failed";
+                    addLog(`Error: ${data.message || 'Out of stock'}`, 'text-rose-400');
+                }
+            } catch (error) {
+                document.getElementById('displayNumber').innerText = "Server Error";
+                addLog("Network Error: Backend offline.", 'text-rose-400');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-bolt"></i> Get Number';
+            }
+        }
+
+        // OTP পোলিং
+        function startPolling() {
+            if (pollingInterval) clearInterval(pollingInterval);
+            addLog("Started polling for OTP...", 'text-amber-400');
+            
+            pollingInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`http://localhost:3000/api/check-otp?last_id=${lastOtpId}`);
+                    const data = await response.json();
+
+                    if (data.success && data.otps.length > 0) {
+                        lastOtpId = data.new_max_id;
+                        const matched = data.otps.find(item => item.number === currentNumber);
+                        
+                        if (matched) {
+                            const otpCode = matched.otp || extractOtpFromMessage(matched.message);
+                            if (otpCode) {
+                                document.getElementById('displayOtp').innerText = otpCode;
+                                addLog(`OTP Received! [${currentNumber}] : ${otpCode}`, 'text-emerald-400 font-bold');
+                                clearInterval(pollingInterval); 
+                                pollingInterval = null;
+                            }
+                        }
+                    }
+                } catch (error) { console.log("Polling error", error); }
+            }, 3000); 
+        }
+
+        // হেল্পার ফাংশন
+        function extractOtpFromMessage(message) {
+            if (!message) return null;
+            const match = message.match(/\b\d{4,6}\b/);
+            return match ? match[0] : null;
+        }
+
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            if (text === '---' || text === '+00000000000' || text === 'Fetching...') return;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.currentTarget;
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check text-emerald-400"></i>';
+                setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
+            });
+        }
+
+        function addLog(message, colorClass = 'text-slate-300') {
+            const container = document.getElementById('logContainer');
+            if (container.innerHTML.includes('Waiting for requests')) container.innerHTML = '';
+            
+            const time = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('p');
+            logEntry.className = `mb-1.5 ${colorClass}`;
+            logEntry.innerHTML = `<span class="text-slate-500">[${time}]</span> ${message}`;
+            
+            container.appendChild(logEntry);
+            container.scrollTop = container.scrollHeight; 
+        }
+    </script>
+</body>
+</html>
